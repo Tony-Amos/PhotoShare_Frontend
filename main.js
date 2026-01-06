@@ -1,5 +1,5 @@
 
-const API = 'http://localhost:3000/api';
+const API = 'photoshare-grh3b6atckgxbgbc.spaincentral-01.azurewebsites.net/api';
 const token = localStorage.getItem('token');
 
 async function register() {
