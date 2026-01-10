@@ -1,5 +1,9 @@
+/* =========================
+   CONFIG
+========================= */
+const API =
+  'https://photoshare-ap-g3dycybub5a8ave7.spaincentral-01.azurewebsites.net/api';
 
-const API = 'https://photoshare-ap-g3dycybub5a8ave7.spaincentral-01.azurewebsites.net/api';
 /* =========================
    HELPERS
 ========================= */
@@ -16,15 +20,30 @@ function authHeaders() {
    AUTH
 ========================= */
 async function register() {
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const roleInput = document.getElementById('role');
+
+  if (
+    !nameInput?.value ||
+    !emailInput?.value ||
+    !passwordInput?.value ||
+    !roleInput?.value
+  ) {
+    alert('All fields are required');
+    return;
+  }
+
   try {
     const res = await fetch(`${API}/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name: name.value,
-        email: email.value,
-        password: password.value,
-        role: role.value
+        name: nameInput.value.trim(),
+        email: emailInput.value.trim(),
+        password: passwordInput.value,
+        role: roleInput.value
       })
     });
 
@@ -41,13 +60,21 @@ async function register() {
 }
 
 async function login() {
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+
+  if (!emailInput?.value || !passwordInput?.value) {
+    alert('Email and password required');
+    return;
+  }
+
   try {
     const res = await fetch(`${API}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        email: email.value,
-        password: password.value
+        email: emailInput.value.trim(),
+        password: passwordInput.value
       })
     });
 
@@ -68,10 +95,18 @@ async function login() {
    CONTENT ACTIONS
 ========================= */
 async function upload() {
+  const titleInput = document.getElementById('title');
+  const imageInput = document.getElementById('image');
+
+  if (!titleInput?.value || !imageInput?.files?.length) {
+    alert('Title and image required');
+    return;
+  }
+
   try {
     const fd = new FormData();
-    fd.append('title', title.value);
-    fd.append('image', image.files[0]);
+    fd.append('title', titleInput.value);
+    fd.append('image', imageInput.files[0]);
 
     const res = await fetch(`${API}/photos`, {
       method: 'POST',
@@ -113,7 +148,7 @@ async function share(id) {
 }
 
 async function comment(e, id) {
-  if (e.key !== 'Enter') return;
+  if (e.key !== 'Enter' || !e.target.value.trim()) return;
 
   try {
     await fetch(`${API}/photos/${id}/comment`, {
@@ -122,7 +157,7 @@ async function comment(e, id) {
         'Content-Type': 'application/json',
         ...authHeaders()
       },
-      body: JSON.stringify({ text: e.target.value })
+      body: JSON.stringify({ text: e.target.value.trim() })
     });
 
     e.target.value = '';
