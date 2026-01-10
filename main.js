@@ -205,7 +205,7 @@ async function loadFeed() {
 
         <input
           class="comment-input"
-          placeholder="Add a comment…"
+          placeholder="Add a comment"
           onkeydown="comment(event,'${p.id}')"
         >
       </div>
