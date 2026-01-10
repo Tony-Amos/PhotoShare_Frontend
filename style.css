@@ -141,25 +141,41 @@ button:active {
 }
 
 /* =========================
-   ACTION BAR (REACTIONS)
+   ACTION BAR (INSTAGRAM-LIKE)
 ========================= */
 .actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 10px;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 12px;
+  flex-wrap: nowrap;
 }
 
 .actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: #f1f5f9;
   color: #111827;
   border-radius: 999px;
-  font-size: 0.8rem;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
 }
 
 .actions button:hover {
   background: #e2e8f0;
+  transform: translateY(-1px);
 }
+
+.actions button:active {
+  transform: translateY(0);
+}
+
 
 /* =========================
    COMMENTS INPUT
