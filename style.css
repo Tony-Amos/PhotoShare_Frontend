@@ -200,6 +200,31 @@ button:active {
 }
 
 /* =========================
+   COMMENTS
+========================= */
+.comments {
+  margin-top: 10px;
+  padding-left: 4px;
+}
+
+.comment {
+  font-size: 0.8rem;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.comment strong {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.comment-input {
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+
+/* =========================
    FOOTER (OPTIONAL)
 ========================= */
 footer {
