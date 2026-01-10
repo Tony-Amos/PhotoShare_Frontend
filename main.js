@@ -169,7 +169,7 @@ async function comment(e, id) {
 }
 
 /* =========================
-   FEED
+   FEED (WITH COMMENTS)
 ========================= */
 async function loadFeed() {
   const feed = document.getElementById('feed');
@@ -188,29 +188,24 @@ async function loadFeed() {
         <p>by ${p.creator || 'SnapFlow User'}</p>
 
         <div class="actions">
-          <button onclick="react('${p.id}','like')">
-            &#128077; ${p.reactions?.like || 0}
-          </button>
+          <button onclick="react('${p.id}','like')">👍 <span>${p.reactions?.like || 0}</span></button>
+          <button onclick="react('${p.id}','love')">❤️ <span>${p.reactions?.love || 0}</span></button>
+          <button onclick="react('${p.id}','wow')">😮 <span>${p.reactions?.wow || 0}</span></button>
+          <button onclick="react('${p.id}','sad')">😢 <span>${p.reactions?.sad || 0}</span></button>
+          <button onclick="share('${p.id}')">🔗 <span>${p.shares || 0}</span></button>
+        </div>
 
-          <button onclick="react('${p.id}','love')">
-            &#10084;&#65039; ${p.reactions?.love || 0}
-          </button>
-
-          <button onclick="react('${p.id}','wow')">
-            &#128562; ${p.reactions?.wow || 0}
-          </button>
-
-          <button onclick="react('${p.id}','sad')">
-            &#128546; ${p.reactions?.sad || 0}
-          </button>
-
-          <button onclick="share('${p.id}')">
-            &#128279; ${p.shares || 0}
-          </button>
+        <div class="comments">
+          ${(p.comments || []).map(c => `
+            <div class="comment">
+              <strong>${c.user}:</strong> ${c.text}
+            </div>
+          `).join('')}
         </div>
 
         <input
-          placeholder="Add comment…"
+          class="comment-input"
+          placeholder="Add a comment…"
           onkeydown="comment(event,'${p.id}')"
         >
       </div>
