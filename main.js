@@ -1,76 +1,197 @@
 
 const API = 'photoshare-grh3b6atckgxbgbc.spaincentral-01.azurewebsites.net/api';
-const token = localStorage.getItem('token');
+/* =========================
+   HELPERS
+========================= */
+function getToken() {
+  return localStorage.getItem('token');
+}
 
+function authHeaders() {
+  const token = getToken();
+  return token ? { Authorization: 'Bearer ' + token } : {};
+}
+
+/* =========================
+   AUTH
+========================= */
 async function register() {
-  await fetch(API+'/register',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      name:name.value,email:email.value,password:password.value,role:role.value
-    })});
-  window.location.href = 'login.html';
-}
-
-async function login() {
-  const r = await fetch(API+'/login',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({email:email.value,password:password.value})});
-  const d = await r.json();
-  localStorage.setItem('token', d.token);
-  window.location.href = d.role === 'creator' ? 'creator.html' : 'index.html';
-}
-
-async function upload() {
-  const fd = new FormData();
-  fd.append('title', title.value);
-  fd.append('image', image.files[0]);
-
-  await fetch(API+'/photos',{method:'POST',
-    headers:{Authorization:'Bearer '+localStorage.getItem('token')},body:fd});
-  window.location.href = 'index.html';
-}
-
-async function loadFeed() {
-  const r = await fetch(API+'/photos');
-  const data = await r.json();
-  feed.innerHTML = data.map(p=>`
-    <div class="card">
-      <img src="${p.url}">
-      <h4>${p.title}</h4>
-      <p>By ${p.creator}</p>
-      <div class="reactions">
-        <button onclick="react('${p.id}','like')">👍 ${p.reactions.like}</button>
-        <button onclick="react('${p.id}','love')">❤️ ${p.reactions.love}</button>
-        <button onclick="react('${p.id}','sad')">😢 ${p.reactions.sad}</button>
-        <button onclick="react('${p.id}','hate')">😡 ${p.reactions.hate}</button>
-        <button onclick="share('${p.id}')">🔗 ${p.shares}</button>
-      </div>
-      <input placeholder="Comment..." onkeydown="comment(event,'${p.id}')">
-      <div>${p.comments.map(c=>'<p><b>'+c.user+':</b> '+c.text+'</p>').join('')}</div>
-    </div>`).join('');
-}
-
-async function react(id,type) {
-  await fetch(`${API}/photos/${id}/react/${type}`,{
-    method:'POST',headers:{Authorization:'Bearer '+token}
-  });
-  loadFeed();
-}
-
-async function comment(e,id) {
-  if(e.key==='Enter'){
-    await fetch(`${API}/photos/${id}/comment`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
-      body:JSON.stringify({text:e.target.value})
+  try {
+    const res = await fetch(`${API}/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: name.value,
+        email: email.value,
+        password: password.value,
+        role: role.value
+      })
     });
-    loadFeed();
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Registration failed');
+
+    alert('Account created successfully');
+    window.location.href = 'login.html';
+
+  } catch (err) {
+    alert(err.message);
+    console.error(err);
   }
 }
 
-async function share(id){
-  await fetch(`${API}/photos/${id}/share`,{
-    method:'POST',headers:{Authorization:'Bearer '+token}
-  });
-  loadFeed();
+async function login() {
+  try {
+    const res = await fetch(`${API}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Login failed');
+
+    localStorage.setItem('token', data.token);
+    window.location.href =
+      data.role === 'creator' ? 'creator.html' : 'index.html';
+
+  } catch (err) {
+    alert(err.message);
+    console.error(err);
+  }
 }
 
-if(document.getElementById('feed')) loadFeed();
+/* =========================
+   CONTENT ACTIONS
+========================= */
+async function upload() {
+  try {
+    const fd = new FormData();
+    fd.append('title', title.value);
+    fd.append('image', image.files[0]);
+
+    const res = await fetch(`${API}/photos`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: fd
+    });
+
+    if (!res.ok) throw new Error('Upload failed');
+    window.location.href = 'index.html';
+
+  } catch (err) {
+    alert(err.message);
+    console.error(err);
+  }
+}
+
+async function react(id, type) {
+  try {
+    await fetch(`${API}/photos/${id}/react/${type}`, {
+      method: 'POST',
+      headers: authHeaders()
+    });
+    loadFeed();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function share(id) {
+  try {
+    await fetch(`${API}/photos/${id}/share`, {
+      method: 'POST',
+      headers: authHeaders()
+    });
+    loadFeed();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function comment(e, id) {
+  if (e.key !== 'Enter') return;
+
+  try {
+    await fetch(`${API}/photos/${id}/comment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders()
+      },
+      body: JSON.stringify({ text: e.target.value })
+    });
+
+    e.target.value = '';
+    loadFeed();
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+/* =========================
+   FEED
+========================= */
+async function loadFeed() {
+  const feed = document.getElementById('feed');
+  if (!feed) return;
+
+  try {
+    const res = await fetch(`${API}/photos`);
+    if (!res.ok) throw new Error('Failed to load feed');
+
+    const data = await res.json();
+
+    feed.innerHTML = data.map(p => `
+      <div class="card">
+        <img src="${p.url}" alt="${p.title}">
+        <h3>${p.title}</h3>
+        <p>by ${p.creator || 'SnapFlow User'}</p>
+
+        <div class="actions">
+          <button onclick="react('${p.id}','like')">
+            &#128077; ${p.reactions?.like || 0}
+          </button>
+
+          <button onclick="react('${p.id}','love')">
+            &#10084;&#65039; ${p.reactions?.love || 0}
+          </button>
+
+          <button onclick="react('${p.id}','wow')">
+            &#128562; ${p.reactions?.wow || 0}
+          </button>
+
+          <button onclick="react('${p.id}','sad')">
+            &#128546; ${p.reactions?.sad || 0}
+          </button>
+
+          <button onclick="share('${p.id}')">
+            &#128279; ${p.shares || 0}
+          </button>
+        </div>
+
+        <input
+          placeholder="Add comment…"
+          onkeydown="comment(event,'${p.id}')"
+        >
+      </div>
+    `).join('');
+
+  } catch (err) {
+    console.error(err);
+    feed.innerHTML = '<p>Unable to load feed.</p>';
+  }
+}
+
+/* =========================
+   INIT
+========================= */
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('feed')) {
+    loadFeed();
+  }
+});
