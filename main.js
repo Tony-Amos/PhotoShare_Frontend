@@ -1,5 +1,5 @@
 
-const API = 'photoshare-grh3b6atckgxbgbc.spaincentral-01.azurewebsites.net/api';
+const API = 'https://photoshare-ap-g3dycybub5a8ave7.spaincentral-01.azurewebsites.net/api';
 /* =========================
    HELPERS
 ========================= */
