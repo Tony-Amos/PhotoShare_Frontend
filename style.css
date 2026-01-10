@@ -1,10 +1,194 @@
+/* =========================
+   GLOBAL RESET & BASE
+========================= */
+* {
+  box-sizing: border-box;
+}
 
-body { font-family: Segoe UI; margin:0; background:#f4f7fb; color:#1f2937; }
-header { background:#0a2540; color:white; padding:15px; }
-nav a { color:#00c2ff; margin-right:15px; text-decoration:none; }
-.container { padding:20px; max-width:1000px; margin:auto; }
-.card { background:white; border-radius:8px; padding:15px; margin-bottom:20px; }
-button { background:#00c2ff; border:none; padding:6px 10px; color:white; margin-right:5px; cursor:pointer; }
-input, textarea, select { width:100%; padding:8px; margin-bottom:10px; }
-img { width:100%; border-radius:6px; }
-.reactions button { background:#e5e7eb; color:#111; }
+body {
+  font-family: "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
+  margin: 0;
+  background: linear-gradient(180deg, #f4f7fb 0%, #eef2f7 100%);
+  color: #1f2937;
+  line-height: 1.6;
+}
+
+/* =========================
+   HEADER & NAV
+========================= */
+header {
+  background: linear-gradient(135deg, #0a2540, #102a44);
+  color: #ffffff;
+  padding: 18px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+}
+
+nav {
+  margin-top: 8px;
+}
+
+nav a {
+  color: #38bdf8;
+  margin-right: 18px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+nav a:hover {
+  color: #7dd3fc;
+}
+
+/* =========================
+   LAYOUT CONTAINER
+========================= */
+.container {
+  padding: 24px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+/* =========================
+   CARDS (FEED / FORMS)
+========================= */
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 22px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+}
+
+.card h3 {
+  margin: 12px 0 6px;
+  font-size: 1.2rem;
+}
+
+.card p {
+  margin: 0 0 12px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+/* =========================
+   IMAGES
+========================= */
+.card img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  object-fit: cover;
+}
+
+/* =========================
+   FORMS
+========================= */
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+/* =========================
+   BUTTONS
+========================= */
+button {
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(14, 165, 233, 0.35);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* =========================
+   ACTION BAR (REACTIONS)
+========================= */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.actions button {
+  background: #f1f5f9;
+  color: #111827;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.actions button:hover {
+  background: #e2e8f0;
+}
+
+/* =========================
+   COMMENTS INPUT
+========================= */
+.card input[type="text"],
+.card input::placeholder {
+  font-size: 0.85rem;
+}
+
+/* =========================
+   AUTH PAGES (LOGIN / REGISTER)
+========================= */
+.container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+}
+
+.container button {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* =========================
+   FOOTER (OPTIONAL)
+========================= */
+footer {
+  text-align: center;
+  padding: 16px;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
