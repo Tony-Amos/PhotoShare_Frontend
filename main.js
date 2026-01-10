@@ -168,6 +168,14 @@ async function comment(e, id) {
   }
 }
 
+function toggleComments(id) {
+  const el = document.getElementById(`comments-${id}`);
+  if (!el) return;
+
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+
 /* =========================
    FEED (WITH COMMENTS)
 ========================= */
@@ -181,35 +189,58 @@ async function loadFeed() {
 
     const data = await res.json();
 
-    feed.innerHTML = data.map(p => `
-      <div class="card">
-        <img src="${p.url}" alt="${p.title}">
-        <h3>${p.title}</h3>
-        <p>by ${p.creator || 'SnapFlow User'}</p>
+   feed.innerHTML = data.map(p => `
+     <div class="card">
+       <img src="${p.url}" alt="${p.title}">
+       <h3>${p.title}</h3>
+       <p>by ${p.creator || 'SnapFlow User'}</p>
+   
+       <div class="actions">
+         <button onclick="react('${p.id}','like')">
+           &#128077; ${p.reactions?.like || 0}
+         </button>
+   
+         <button onclick="react('${p.id}','love')">
+           &#10084;&#65039; ${p.reactions?.love || 0}
+         </button>
+   
+         <button onclick="react('${p.id}','wow')">
+           &#128562; ${p.reactions?.wow || 0}
+         </button>
+   
+         <button onclick="react('${p.id}','sad')">
+           &#128546; ${p.reactions?.sad || 0}
+         </button>
+   
+         <button onclick="share('${p.id}')">
+           &#128279; ${p.shares || 0}
+         </button>
+   
+         <button onclick="toggleComments('${p.id}')">
+           &#128172; ${(p.comments || []).length}
+         </button>
+       </div>
+   
+       <div
+         id="comments-${p.id}"
+         class="comments"
+         style="display:none"
+       >
+         ${(p.comments || []).map(c => `
+           <div class="comment">
+             <strong>${c.user}:</strong> ${c.text}
+           </div>
+         `).join('')}
+   
+         <input
+           class="comment-input"
+           placeholder="Add a comment…"
+           onkeydown="comment(event,'${p.id}')"
+         >
+       </div>
+     </div>
+   `).join('');
 
-        <div class="actions">
-          <button onclick="react('${p.id}','like')">👍 <span>${p.reactions?.like || 0}</span></button>
-          <button onclick="react('${p.id}','love')">❤️ <span>${p.reactions?.love || 0}</span></button>
-          <button onclick="react('${p.id}','wow')">😮 <span>${p.reactions?.wow || 0}</span></button>
-          <button onclick="react('${p.id}','sad')">😢 <span>${p.reactions?.sad || 0}</span></button>
-          <button onclick="share('${p.id}')">🔗 <span>${p.shares || 0}</span></button>
-        </div>
-
-        <div class="comments">
-          ${(p.comments || []).map(c => `
-            <div class="comment">
-              <strong>${c.user}:</strong> ${c.text}
-            </div>
-          `).join('')}
-        </div>
-
-        <input
-          class="comment-input"
-          placeholder="Add a comment"
-          onkeydown="comment(event,'${p.id}')"
-        >
-      </div>
-    `).join('');
 
   } catch (err) {
     console.error(err);
